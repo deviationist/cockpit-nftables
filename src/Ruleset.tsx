@@ -31,7 +31,7 @@ const OWNER: Record<Owner, { label: string; color: Color; help: string }> = {
     other: { label: _("Runtime"), color: "grey", help: _("Created at runtime by another program. View only.") },
 };
 
-function verdictColor(v: string | null): Color {
+export function verdictColor(v: string | null): Color {
     if (!v) return "grey";
     if (v === "accept") return "green";
     if (v === "drop" || v.startsWith("reject")) return "red";
@@ -40,7 +40,7 @@ function verdictColor(v: string | null): Color {
     return "yellow"; // nat / masquerade / other
 }
 
-function RuleRows({ rules, filter }: { rules: Rule[]; filter: string }) {
+export function RuleRows({ rules, filter }: { rules: Rule[]; filter: string }) {
     // Cockpit's own ListingTable (pkg/lib, on @patternfly/react-table), so the
     // rules look like every other table in Cockpit. Order is evaluation order,
     // so no sorting: first match wins.

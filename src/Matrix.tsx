@@ -10,7 +10,7 @@
  * lookup. Read-only.
  */
 
-import React, { useMemo, useState } from 'react';
+import React, { useId, useMemo, useState } from 'react';
 import { Alert } from "@patternfly/react-core/dist/esm/components/Alert/index.js";
 import { Button } from "@patternfly/react-core/dist/esm/components/Button/index.js";
 import { Card, CardBody, CardTitle } from "@patternfly/react-core/dist/esm/components/Card/index.js";
@@ -23,7 +23,7 @@ import { Flex, FlexItem } from "@patternfly/react-core/dist/esm/layouts/Flex/ind
 
 import cockpit from 'cockpit';
 
-import { Model, Trace, evaluate, ip4 } from './lib/evaluate';
+import { Model, Packet, Trace, evaluate, ip4 } from './lib/evaluate';
 import { Cell, CellState, cellFor } from './lib/matrix';
 import { Iface, Service, Zone } from './lib/zones';
 
@@ -92,8 +92,12 @@ function PortToggle({ port, trace }: { port: number; trace: Trace }) {
     );
 }
 
-function Lookup({ model, ifaces, ruleText }: { model: Model; ifaces: Iface[]; ruleText: RuleText }) {
+export function Lookup({ model, ifaces, ruleText, onResult }: {
+    model: Model; ifaces: Iface[]; ruleText: RuleText;
+    onResult?: (pkt: Packet, trace: Trace) => void;
+}) {
     const usable = ifaces.filter(f => f.kind !== "other");
+    const uid = useId();
     const [iif, setIif] = useState(usable[0]?.name ?? "");
     const [saddr, setSaddr] = useState("");
     const [proto, setProto] = useState<"tcp" | "udp">("tcp");
@@ -102,34 +106,43 @@ function Lookup({ model, ifaces, ruleText }: { model: Model; ifaces: Iface[]; ru
     const daddr = usable.find(f => f.name === iif)?.addr ?? "";
     const valid = ip4(saddr) !== null && Number(port) > 0 && Number(port) < 65536;
     return (
-        <Form isHorizontal onSubmit={e => { e.preventDefault(); if (valid) setTrace(evaluate(model, { iif, saddr, daddr, proto, dport: Number(port) })); }}>
+        <Form
+            isHorizontal onSubmit={e => {
+                e.preventDefault();
+                if (!valid) return;
+                const pkt: Packet = { iif, saddr, daddr, proto, dport: Number(port) };
+                const t = evaluate(model, pkt);
+                if (onResult) onResult(pkt, t);
+                else setTrace(t);
+            }}
+        >
             <Flex alignItems={{ default: "alignItemsFlexEnd" }} spaceItems={{ default: "spaceItemsMd" }}>
                 <FlexItem>
-                    <FormGroup label={_("Arrives on")} fieldId="lk-iif">
-                        <FormSelect id="lk-iif" value={iif} onChange={(_e, v) => setIif(v)}>
+                    <FormGroup label={_("Arrives on")} fieldId={`${uid}-iif`}>
+                        <FormSelect id={`${uid}-iif`} value={iif} onChange={(_e, v) => setIif(v)}>
                             {usable.map(f => <FormSelectOption key={f.name + f.addr} value={f.name} label={`${f.name} (${f.addr})`} />)}
                         </FormSelect>
                     </FormGroup>
                 </FlexItem>
                 <FlexItem>
-                    <FormGroup label={_("From address")} fieldId="lk-src">
+                    <FormGroup label={_("From address")} fieldId={`${uid}-src`}>
                         <TextInput
-                            id="lk-src" value={saddr} placeholder="192.168.1.50" onChange={(_e, v) => setSaddr(v)}
+                            id={`${uid}-src`} value={saddr} placeholder="192.168.1.50" onChange={(_e, v) => setSaddr(v)}
                             validated={saddr && ip4(saddr) === null ? "error" : "default"}
                         />
                     </FormGroup>
                 </FlexItem>
                 <FlexItem>
-                    <FormGroup label={_("Protocol")} fieldId="lk-proto">
-                        <FormSelect id="lk-proto" value={proto} onChange={(_e, v) => setProto(v as "tcp" | "udp")}>
+                    <FormGroup label={_("Protocol")} fieldId={`${uid}-proto`}>
+                        <FormSelect id={`${uid}-proto`} value={proto} onChange={(_e, v) => setProto(v as "tcp" | "udp")}>
                             <FormSelectOption value="tcp" label="TCP" />
                             <FormSelectOption value="udp" label="UDP" />
                         </FormSelect>
                     </FormGroup>
                 </FlexItem>
                 <FlexItem>
-                    <FormGroup label={_("Port")} fieldId="lk-port">
-                        <TextInput id="lk-port" value={port} type="number" onChange={(_e, v) => setPort(v)} className="cnft-port" />
+                    <FormGroup label={_("Port")} fieldId={`${uid}-port`}>
+                        <TextInput id={`${uid}-port`} value={port} type="number" onChange={(_e, v) => setPort(v)} className="cnft-port" />
                     </FormGroup>
                 </FlexItem>
                 <FlexItem>

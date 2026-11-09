@@ -24,6 +24,7 @@ import { requestAdmin, useAdmin } from './lib/admin';
 import { declaredTables, tableSet } from './lib/conf-lint';
 import { buildModel } from './lib/evaluate';
 import { deriveZones, groupServices, parseDefaultRoute, parseIfaces, parseSs, saddrRefs } from './lib/zones';
+import { MapView } from './Map';
 import { MatrixView } from './Matrix';
 import { ReadResult, confirmApply, readState, revertApply } from './lib/helper';
 import { classify, overlayJson, parseIptablesManaged, parseRuleset, tableKey } from './lib/ruleset-parse';
@@ -31,6 +32,21 @@ import { classify, overlayJson, parseIptablesManaged, parseRuleset, tableKey } f
 const _ = cockpit.gettext;
 
 const POLL = 10000;
+
+// Tabs live in the URL (cockpit.location: …/nftables#/map/rules), so a reload,
+// the back button or a shared link lands on the same view. Same pattern as
+// cockpit-upside.
+const TABS = ["matrix", "map", "ruleset", "config"];
+
+function usePageLocation() {
+    const [location, setLocation] = useState(cockpit.location);
+    useEffect(() => {
+        const update = () => setLocation(cockpit.location);
+        cockpit.addEventListener("locationchanged", update);
+        return () => cockpit.removeEventListener("locationchanged", update);
+    }, []);
+    return location;
+}
 
 function PendingBanner({ data, onDone }: { data: ReadResult; onDone: () => void }) {
     const p = data.pending!;
@@ -87,7 +103,9 @@ export function Application({ fixture }: { fixture?: ReadResult } = {}) {
     const admin = fixture ? true : realAdmin;
     const [data, setData] = useState<ReadResult | null>(fixture ?? null);
     const [error, setError] = useState<string | null>(null);
-    const [tab, setTab] = useState<string | number>("matrix");
+    const location = usePageLocation();
+    const tab = TABS.includes(location.path[0]) ? location.path[0] : "matrix";
+    const mapMode = location.path[1] === "rules" ? "rules" : "topology";
     const [draft, setDraft] = useState<string | null>(null);
 
     const refresh = useCallback(async () => {
@@ -181,12 +199,21 @@ export function Application({ fixture }: { fixture?: ReadResult } = {}) {
                 {fileChanged && <Alert isInline variant="warning" className="pf-v6-u-mb-md" title={_("The file changed on disk while you were editing. Discard your changes to load it.")} />}
                 {(!data || !parsed) && <Spinner />}
                 {data && parsed &&
-                    <Tabs activeKey={tab} onSelect={(_e, k) => setTab(k)} mountOnEnter>
+                    <Tabs activeKey={tab} onSelect={(_e, k) => cockpit.location.go([String(k)])} mountOnEnter>
                         <Tab eventKey="matrix" title={<TabTitleText>{_("Who can reach what")}</TabTitleText>}>
                             <div className="pf-v6-u-mt-md">
                                 <MatrixView
                                     model={parsed.model} zones={parsed.zones} services={parsed.services}
                                     ifaces={parsed.ifaces} ruleText={parsed.ruleText}
+                                />
+                            </div>
+                        </Tab>
+                        <Tab eventKey="map" title={<TabTitleText>{_("Map")}</TabTitleText>}>
+                            <div className="pf-v6-u-mt-md">
+                                <MapView
+                                    model={parsed.model} zones={parsed.zones} services={parsed.services}
+                                    ifaces={parsed.ifaces} tables={parsed.tables} ruleText={parsed.ruleText}
+                                    mode={mapMode} onMode={m => cockpit.location.go(m === "rules" ? ["map", "rules"] : ["map"])}
                                 />
                             </div>
                         </Tab>

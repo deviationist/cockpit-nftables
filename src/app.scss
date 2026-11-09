@@ -127,3 +127,225 @@ pre.cnft-mono {
     overflow-wrap: anywhere;
     max-width: 100%;
 }
+
+/* ---------------- Map tab ---------------- */
+
+.cnft-map-toolbar { padding-block-start: 0; }
+
+.cnft-map-lookup {
+    padding: var(--pf-t--global--spacer--md);
+    margin-block-end: var(--pf-t--global--spacer--md);
+    border: var(--pf-t--global--border--width--regular) solid var(--pf-t--global--border--color--default);
+    border-radius: var(--pf-t--global--border--radius--small);
+}
+
+.cnft-legend { margin-block-end: var(--pf-t--global--spacer--md); }
+
+.cnft-map-body {
+    display: flex;
+    flex-direction: column;
+    gap: var(--pf-t--global--spacer--md);
+
+    &.cnft-with-panel {
+        flex-direction: row;
+        align-items: flex-start;
+    }
+}
+
+.cnft-map-canvas {
+    flex: 1;
+    min-width: 0;
+}
+
+.cnft-drawer {
+    flex: none;
+    width: 100%;
+
+    .cnft-with-panel & { width: 380px; }
+}
+
+.cnft-drawer-body {
+    max-height: 70vh;
+    overflow: auto;
+}
+
+.cnft-canvas {
+    position: relative;
+    overflow: hidden;
+    --cnft-allow: var(--pf-t--global--color--status--success--default);
+    --cnft-block: var(--pf-t--global--color--status--danger--default);
+    --cnft-partial: var(--pf-t--global--color--status--warning--default);
+    --cnft-docker: var(--pf-t--global--color--nonstatus--purple--default);
+    --cnft-unknown: var(--pf-t--global--icon--color--subtle);
+    --cnft-neutral: var(--pf-t--global--border--color--default);
+    --cnft-lit: var(--pf-t--global--color--brand--default);
+}
+
+.cnft-canvas-inner {
+    position: relative;
+    transform-origin: 0 0;
+    margin-block-start: 40px;
+}
+
+.cnft-edges {
+    position: absolute;
+    inset: 0;
+    overflow: visible;
+}
+
+.cnft-host {
+    position: absolute;
+    border: var(--pf-t--global--border--width--regular) dashed var(--pf-t--global--border--color--default);
+    border-radius: var(--pf-t--global--border--radius--medium);
+    background: var(--pf-t--global--background--color--secondary--default);
+}
+
+.cnft-host-label {
+    position: absolute;
+    top: -24px;
+    left: 8px;
+    font-size: var(--pf-t--global--font--size--sm);
+    color: var(--pf-t--global--text--color--subtle);
+}
+
+.cnft-edge {
+    path { fill: none; }
+    .cnft-edge-hit { stroke: transparent; stroke-width: 14; }
+    .cnft-edge-line { stroke-width: 2; stroke-linecap: round; }
+    .cnft-edge-glow { stroke: var(--cnft-lit); stroke-width: 8; opacity: 0.3; }
+
+    &.cnft-clickable { cursor: pointer; }
+    &.cnft-clickable:focus-visible .cnft-edge-line { stroke-width: 4; }
+    &.cnft-lit .cnft-edge-line { stroke-width: 3; }
+
+    &.cnft-st-allow .cnft-edge-line { stroke: var(--cnft-allow); }
+    &.cnft-st-block .cnft-edge-line { stroke: var(--cnft-block); stroke-dasharray: 2 4; }
+    &.cnft-st-partial .cnft-edge-line { stroke: var(--cnft-partial); }
+    &.cnft-st-docker .cnft-edge-line { stroke: var(--cnft-docker); stroke-dasharray: 6 4; }
+    &.cnft-st-unknown .cnft-edge-line { stroke: var(--cnft-unknown); stroke-dasharray: 6 4; }
+    &.cnft-st-neutral .cnft-edge-line { stroke: var(--cnft-neutral); stroke-width: 1.5; }
+
+    // hover / keyboard focus on a node: its edges light up, the rest fade
+    path { transition: opacity 0.12s, stroke-width 0.12s; }
+    &.cnft-cold { opacity: 0.15; }
+    &.cnft-hot .cnft-edge-line { stroke-width: 3.5; }
+    &.cnft-hot.cnft-st-neutral .cnft-edge-line { stroke: var(--pf-t--global--icon--color--regular); stroke-width: 2.5; }
+
+    .cnft-edge-label rect {
+        fill: var(--pf-t--global--background--color--primary--default);
+        stroke: var(--cnft-partial);
+    }
+
+    .cnft-edge-label text {
+        font-size: 11px;
+        fill: var(--pf-t--global--text--color--regular);
+    }
+}
+
+.cnft-node,
+.cnft-rnode {
+    position: absolute;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 2px;
+    padding: 6px 10px;
+    text-align: start;
+    font: inherit;
+    color: var(--pf-t--global--text--color--regular);
+    background: var(--pf-t--global--background--color--primary--default);
+    border: var(--pf-t--global--border--width--regular) solid var(--pf-t--global--border--color--default);
+    border-radius: var(--pf-t--global--border--radius--small);
+    box-shadow: var(--pf-t--global--box-shadow--sm);
+    cursor: pointer;
+    overflow: hidden;
+    transition: opacity 0.15s;
+
+    &:hover { border-color: var(--pf-t--global--border--color--hover); }
+    &:focus-visible { outline: 2px solid var(--cnft-lit); outline-offset: 2px; }
+}
+
+.cnft-node-iface {
+    flex-direction: row;
+    align-items: center;
+    gap: 6px;
+    padding: 0 10px;
+    border-radius: 15px;
+    white-space: nowrap;
+}
+
+.cnft-node-label {
+    font-weight: var(--pf-t--global--font--weight--body--bold);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.cnft-node-detail {
+    font-size: var(--pf-t--global--font--size--xs);
+    color: var(--pf-t--global--text--color--subtle);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.cnft-selected {
+    border: 2px solid var(--cnft-lit);
+    padding: 5px 9px;
+}
+
+.cnft-dim { opacity: 0.3; }
+
+.cnft-rnode-header {
+    align-items: center;
+    background: var(--pf-t--global--background--color--secondary--default);
+    box-shadow: none;
+}
+
+.cnft-rnode-collapsed {
+    align-items: center;
+    border-style: dashed;
+    box-shadow: none;
+}
+
+.cnft-rnode-top,
+.cnft-rnode-meta {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    min-width: 0;
+}
+
+.cnft-rnode-top { justify-content: space-between; }
+.cnft-rnode-regular { box-shadow: none; }
+.cnft-link { color: var(--pf-t--global--text--color--link--default); font-size: var(--pf-t--global--font--size--sm); }
+
+.cnft-redge path {
+    fill: none;
+    stroke: var(--pf-t--global--icon--color--subtle);
+    stroke-width: 1.5;
+}
+
+.cnft-redge-hook path { stroke-width: 2; }
+.cnft-redge.cnft-hot path { stroke: var(--cnft-lit); stroke-width: 3; }
+.cnft-redge.cnft-cold { opacity: 0.25; }
+.cnft-arrowhead { fill: var(--pf-t--global--icon--color--subtle); }
+
+.cnft-redge-label {
+    font-size: 11px;
+    fill: var(--pf-t--global--text--color--subtle);
+}
+
+.cnft-plain-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+
+    li { margin-block: var(--pf-t--global--spacer--sm); }
+}
+
+.cnft-phone-list li {
+    padding-block: var(--pf-t--global--spacer--sm);
+    border-block-end: var(--pf-t--global--border--width--regular) solid var(--pf-t--global--border--color--default);
+}

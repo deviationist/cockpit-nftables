@@ -41,6 +41,16 @@ Menu label: **nftables**. Stack and build follow [cockpit-upside](https://github
   harmless only if the target chain doesn't decide the packet.
   Docker-published ports show "Docker" (decided by DNAT/FORWARD, not input).
 
+- **"Map" tab** (from a Claude Design prototype, recommended variants): Topology
+  = zones -> interface "ports" on the host -> services, edges bundled per
+  interface until a zone / interface / service is focused; edge -> trace in a
+  side panel. Rule graph = hooks left to right, base chains by priority across
+  all ip/inet tables, regular chains via jump/goto. "Is this allowed?" lights
+  the path up in both. Plain React + SVG with PatternFly controls (no graph
+  library: the columns are fixed, so PatternFly Topology's d3/mobx buy nothing).
+  Blocked/Docker/unknown edges are dashed (not colour alone); edges are
+  keyboard-reachable. Phone width: lists instead of graphs.
+
 ## Testing rule
 
 **Never test against a host's real firewall.** Test against the sandbox copy
@@ -60,6 +70,8 @@ src/lib/evaluate.ts        packet evaluator over nft -j (pure)
 src/lib/zones.ts           zones from ip addr/route + config saddr refs; ss parsing (pure)
 src/lib/matrix.ts          matrix cells (pure)
 src/Matrix.tsx             "Who can reach what" tab + trace + "Is this allowed?" lookup
+src/lib/map-layout.ts      Map tab layout: topology bundling/focus + rule graph (pure)
+src/Map.tsx                "Map" tab: topology, rule graph, side panel, phone lists
 src/preview.tsx            static preview entry (renders a captured read; no helper)
 src/lib/helper.ts          cockpit.spawn wrapper
 src/lib/admin.ts           admin gating (from upside)
@@ -89,7 +101,7 @@ npm run preview      # static, helper-free preview in preview-dist/ (needs a cap
 
 ## Next (not started)
 
-- Packet-path view with `@patternfly/react-topology@6.4.0` (read-only: hook → chains by priority → jumps).
+- Map: Docker containers behind the bridge (needs `docker inspect`), per-chain packet totals.
 - Shadowed/redundant-rule lint (idea from nftables-analyzer, MIT).
 - Matrix: resolve xt matches nft can translate (`nft list` text shows Docker's addrtype as `fib daddr type local`; the JSON keeps `xt`); IPv6; editable zones; full process names (ss truncates to 15 chars).
 - Syntax highlighting / line numbers (PatternFly CodeEditor + a grammar ported from the nano/Vim/Kate definitions).
