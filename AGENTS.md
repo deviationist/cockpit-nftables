@@ -51,6 +51,10 @@ Menu label: **nftables**. Stack and build follow [cockpit-upside](https://github
   Blocked/Docker/unknown edges are dashed (not colour alone); edges are
   keyboard-reachable. Phone width: lists instead of graphs.
 
+- **Screenshots only ever show `test/demo/`**, never a real host: the repo is
+  public. `make screenshots` regenerates them; add a scenario in
+  `tools/screenshots/shoot.mjs` rather than taking one-off screenshots.
+
 ## Testing rule
 
 **Never test against a host's real firewall.** Test against the sandbox copy
@@ -73,6 +77,8 @@ src/Matrix.tsx             "Who can reach what" tab + trace + "Is this allowed?"
 src/lib/map-layout.ts      Map tab layout: topology bundling/focus + rule graph (pure)
 src/Map.tsx                "Map" tab: topology, rule graph, side panel, phone lists
 src/preview.tsx            static preview entry (renders a captured read; no helper)
+test/demo/                 neutral demo server (config, iptables rules, sockets, interfaces) for screenshots
+tools/screenshots/         fixture.sh (demo -> netns -> read.json), shoot.mjs (playwright-core scenarios)
 src/lib/helper.ts          cockpit.spawn wrapper
 src/lib/admin.ts           admin gating (from upside)
 src/Ruleset.tsx            Live ruleset tab
@@ -94,6 +100,7 @@ sudo sh test/sandbox-copy.sh                 # full cycle incl. the real systemd
                                              # iptables-save of Docker/Tailscale); host fingerprinted
                                              # before/after. All writes go through `ip netns exec`.
 make devel-install   # ~/.local/share/cockpit/nftables -> dist (current user only)
+make screenshots     # README screenshots from test/demo/ (sudo: throwaway netns; tools/screenshots/)
 npm run preview      # static, helper-free preview in preview-dist/ (needs a captured
                      # preview-dist/fixture.json = helper `read` output; gitignored,
                      # contains the host's firewall: delete after use)

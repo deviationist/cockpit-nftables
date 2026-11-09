@@ -1,0 +1,13 @@
+tcp   LISTEN 0 128    0.0.0.0:22         0.0.0.0:* users:(("sshd",pid=801,fd=3))
+tcp   LISTEN 0 511    0.0.0.0:80         0.0.0.0:* users:(("nginx",pid=902,fd=6))
+tcp   LISTEN 0 511    0.0.0.0:443        0.0.0.0:* users:(("nginx",pid=902,fd=7))
+tcp   LISTEN 0 50     0.0.0.0:139        0.0.0.0:* users:(("smbd",pid=1003,fd=30))
+tcp   LISTEN 0 50     0.0.0.0:445        0.0.0.0:* users:(("smbd",pid=1003,fd=29))
+tcp   LISTEN 0 1024   0.0.0.0:32400      0.0.0.0:* users:(("plex",pid=1104,fd=40))
+tcp   LISTEN 0 64     10.20.0.1:2049     0.0.0.0:*
+tcp   LISTEN 0 4096   0.0.0.0:3306       0.0.0.0:* users:(("docker-proxy",pid=1205,fd=7))
+tcp   LISTEN 0 4096   127.0.0.1:5432     0.0.0.0:* users:(("postgres",pid=1306,fd=6))
+tcp   LISTEN 0 4096   0.0.0.0:9100       0.0.0.0:* users:(("node_exporter",pid=1407,fd=3))
+udp   UNCONN 0 0      192.168.1.10:514   0.0.0.0:* users:(("rsyslogd",pid=1508,fd=5))
+udp   UNCONN 0 0      0.0.0.0:51820      0.0.0.0:*
+udp   UNCONN 0 0      0.0.0.0:41641      0.0.0.0:* users:(("tailscaled",pid=1609,fd=12))

@@ -1,0 +1,61 @@
+[
+ {
+  "ifname": "lo",
+  "addr_info": [
+   {
+    "family": "inet",
+    "local": "127.0.0.1",
+    "prefixlen": 8
+   }
+  ]
+ },
+ {
+  "ifname": "eth0",
+  "addr_info": [
+   {
+    "family": "inet",
+    "local": "192.168.1.10",
+    "prefixlen": 24
+   }
+  ]
+ },
+ {
+  "ifname": "wg0",
+  "linkinfo": {
+   "info_kind": "wireguard"
+  },
+  "addr_info": [
+   {
+    "family": "inet",
+    "local": "10.20.0.1",
+    "prefixlen": 24
+   }
+  ]
+ },
+ {
+  "ifname": "tailscale0",
+  "linkinfo": {
+   "info_kind": "tun"
+  },
+  "addr_info": [
+   {
+    "family": "inet",
+    "local": "100.101.102.103",
+    "prefixlen": 32
+   }
+  ]
+ },
+ {
+  "ifname": "docker0",
+  "linkinfo": {
+   "info_kind": "bridge"
+  },
+  "addr_info": [
+   {
+    "family": "inet",
+    "local": "172.17.0.1",
+    "prefixlen": 16
+   }
+  ]
+ }
+]

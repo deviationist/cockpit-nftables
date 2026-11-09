@@ -50,3 +50,10 @@ devel-uninstall:
 	rm -f ~/.local/share/cockpit/$(PACKAGE_NAME)
 
 .PHONY: all watch test check clean install devel-install devel-uninstall
+
+# README screenshots from the demo data in test/demo/ (needs sudo for the
+# throwaway network namespace; never touches the host firewall)
+screenshots: $(NODE_MODULES_TEST) $(COCKPIT_REPO_STAMP)
+	npm run screenshots
+
+.PHONY: screenshots
