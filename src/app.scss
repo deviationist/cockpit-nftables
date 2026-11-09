@@ -1,0 +1,129 @@
+// SPDX-License-Identifier: LGPL-2.1-or-later
+//
+// Only the few custom touches; everything else is PatternFly (theme tokens
+// follow Cockpit's light/dark setting via .pf-v6-theme-dark).
+
+@use "page.scss";
+
+.cnft-mono {
+    font-family: var(--pf-t--global--font--family--mono);
+    font-size: var(--pf-t--global--font--size--sm);
+}
+
+.cnft-muted {
+    color: var(--pf-t--global--text--color--subtle);
+}
+
+.cnft-pre {
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+    margin: var(--pf-t--global--spacer--xs) 0;
+}
+
+.cnft-chain {
+    margin-block: var(--pf-t--global--spacer--md);
+}
+
+.cnft-rules {
+    margin-block-start: var(--pf-t--global--spacer--sm);
+
+    .cnft-col-num { width: 3em; color: var(--pf-t--global--text--color--subtle); }
+    .cnft-col-verdict { width: 9em; }
+    .cnft-col-count { width: 6em; text-align: end; font-variant-numeric: tabular-nums; }
+}
+
+.cnft-rule {
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+}
+
+.cnft-comment {
+    color: var(--pf-t--global--text--color--subtle);
+    font-size: var(--pf-t--global--font--size--sm);
+}
+
+.cnft-editor textarea {
+    min-height: 60vh;
+    tab-size: 4;
+    white-space: pre;
+    overflow-wrap: normal;
+    overflow-x: auto;
+}
+
+.cnft-findings {
+    margin-block: var(--pf-t--global--spacer--sm);
+}
+
+.cnft-diff {
+    border: var(--pf-t--global--border--width--regular) solid var(--pf-t--global--border--color--default);
+    border-radius: var(--pf-t--global--border--radius--small);
+    margin-block: var(--pf-t--global--spacer--md);
+    overflow-x: auto;
+}
+
+.cnft-hunk-head {
+    padding: var(--pf-t--global--spacer--xs) var(--pf-t--global--spacer--sm);
+    background: var(--pf-t--global--background--color--secondary--default);
+    color: var(--pf-t--global--text--color--subtle);
+}
+
+.cnft-diff-line {
+    display: flex;
+    white-space: pre;
+}
+
+.cnft-diff-no {
+    width: 3.5em;
+    flex: none;
+    text-align: end;
+    padding-inline-end: var(--pf-t--global--spacer--sm);
+    color: var(--pf-t--global--text--color--subtle);
+    user-select: none;
+}
+
+.cnft-diff-sign {
+    width: 1.5em;
+    flex: none;
+    user-select: none;
+}
+
+.cnft-diff-add { background: color-mix(in srgb, var(--pf-t--global--color--status--success--default) 18%, transparent); }
+.cnft-diff-del { background: color-mix(in srgb, var(--pf-t--global--color--status--danger--default) 18%, transparent); }
+
+.cnft-small {
+    font-size: var(--pf-t--global--font--size--xs);
+    font-weight: normal;
+}
+
+.cnft-matrix-wrap {
+    overflow-x: auto;
+}
+
+.cnft-matrix {
+    .cnft-matrix-zone {
+        min-width: 8em;
+        max-width: 11em;
+        vertical-align: bottom;
+        white-space: normal;
+        overflow-wrap: anywhere;
+    }
+    .cnft-matrix-cell { text-align: center; }
+    .cnft-active { outline: 2px solid var(--pf-t--global--border--color--clicked); outline-offset: -2px; }
+}
+
+.cnft-trace-steps {
+    margin-block: var(--pf-t--global--spacer--sm);
+    padding-inline-start: var(--pf-t--global--spacer--lg);
+
+    li { margin-block: var(--pf-t--global--spacer--xs); }
+}
+
+.cnft-port { max-width: 7em; }
+
+// Code blocks wrap instead of widening the page (phones: a long command in an
+// Alert pushed the whole page sideways).
+pre.cnft-mono {
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+    max-width: 100%;
+}

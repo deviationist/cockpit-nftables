@@ -1,0 +1,15 @@
+{
+    "requires": {
+        "cockpit": "137"
+    },
+
+    "menu": {
+        "index": {
+            "label": "nftables",
+            "order": 30,
+            "keywords": [
+                { "matches": ["firewall", "nftables", "nft", "ruleset", "iptables"] }
+            ]
+        }
+    }
+}
